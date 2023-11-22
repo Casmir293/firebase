@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getDocs } from "firebase/firestore";
+import { getDocs, addDoc } from "firebase/firestore";
 import { colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
@@ -43,9 +43,20 @@ onMounted(async () => {
   }
 });
 
-const addBook = (e) => {
+const addBook = async (e) => {
   e.preventDefault();
-  // Add book logic here
+
+  try {
+    await addDoc(colRef, {
+      title: newBook.value.title,
+      author: newBook.value.author,
+    });
+
+    newBook.value.title = "";
+    newBook.value.author = "";
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 const deleteBook = (e) => {
