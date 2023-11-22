@@ -15,7 +15,7 @@
 
       <form class="delete" @submit.prevent="deleteBook">
         <label for="id">Document id:</label>
-        <input type="text" name="id" required />
+        <input type="text" v-model="oldBook.id" name="id" required />
 
         <button>delete a book</button>
       </form>
@@ -25,10 +25,11 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getDocs, addDoc } from "firebase/firestore";
-import { colRef } from "@/services/firebase";
+import { getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { db, colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
+const oldBook = ref({ id: "" });
 
 onMounted(async () => {
   try {
@@ -59,8 +60,15 @@ const addBook = async (e) => {
   }
 };
 
-const deleteBook = (e) => {
+const deleteBook = async (e) => {
   e.preventDefault();
-  // Delete book logic here
+
+  try {
+    const docRef = doc(db, "books", oldBook.value.id);
+    await deleteDoc(docRef);
+    oldBook.value.id = "";
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 </script>
