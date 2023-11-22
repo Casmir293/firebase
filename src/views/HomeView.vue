@@ -6,9 +6,9 @@
 
       <form class="add" @submit.prevent="addBook">
         <label for="title">Title:</label>
-        <input type="text" name="title" required />
+        <input type="text" v-model="newBook.title" name="title" required />
         <label for="author">Author:</label>
-        <input type="text" name="author" required />
+        <input type="text" v-model="newBook.author" name="author" required />
 
         <button>add a new book</button>
       </form>
@@ -24,13 +24,32 @@
 </template>
 
 <script setup>
-import { db, colRef, addDoc } from "@/services/firebase";
+import { ref, onMounted } from "vue";
+import { getDocs } from "firebase/firestore";
+import { colRef } from "@/services/firebase";
+
+const newBook = ref({ title: "", author: "" });
+
+onMounted(async () => {
+  try {
+    const snapshot = await getDocs(colRef);
+    let books = [];
+    snapshot.docs.forEach((doc) => {
+      books.push({ ...doc.data(), id: doc.id });
+    });
+    console.log(books);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 const addBook = (e) => {
   e.preventDefault();
+  // Add book logic here
 };
 
 const deleteBook = (e) => {
   e.preventDefault();
+  // Delete book logic here
 };
 </script>
