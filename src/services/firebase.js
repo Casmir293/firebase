@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, addDoc } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDa6K26zQCeqtSiqCcHTGKL98FClH9TUEs",
@@ -31,3 +31,5 @@ getDocs(colRef)
   .catch((err) => {
     console.log(err.message);
   });
+
+export { db, colRef };
