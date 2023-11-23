@@ -25,24 +25,40 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import { onSnapshot, addDoc, deleteDoc, doc } from "firebase/firestore";
 import { db, colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
 const oldBook = ref({ id: "" });
 
-onMounted(async () => {
+// Real Time Collection Data
+onMounted(() => {
   try {
-    const snapshot = await getDocs(colRef);
-    let books = [];
-    snapshot.docs.forEach((doc) => {
-      books.push({ ...doc.data(), id: doc.id });
+    onSnapshot(colRef, (snapshot) => {
+      let books = [];
+      snapshot.docs.forEach((doc) => {
+        books.push({ ...doc.data(), id: doc.id });
+      });
+      console.log(books);
     });
-    console.log(books);
   } catch (err) {
     console.error(err.message);
   }
 });
+
+// Collection Ref
+// onMounted(async () => {
+//   try {
+//     const snapshot = await getDocs(colRef);
+//     let books = [];
+//     snapshot.docs.forEach((doc) => {
+//       books.push({ ...doc.data(), id: doc.id });
+//     });
+//     console.log(books);
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// });
 
 const addBook = async (e) => {
   e.preventDefault();
