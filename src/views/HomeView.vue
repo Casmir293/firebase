@@ -32,6 +32,7 @@ import {
   doc,
   query,
   where,
+  orderBy,
 } from "firebase/firestore";
 import { db, colRef } from "@/services/firebase";
 
@@ -39,7 +40,11 @@ const newBook = ref({ title: "", author: "" });
 const oldBook = ref({ id: "" });
 
 // Queries
-const q = query(colRef, where("author", "==", "Casmir Onyeka"));
+const q = query(
+  colRef,
+  where("author", "==", "Casmir Onyeka"),
+  orderBy("title", "asc")
+);
 
 // Real Time Collection Data (Queries)
 onMounted(() => {
