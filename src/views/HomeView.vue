@@ -25,11 +25,36 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { onSnapshot, addDoc, deleteDoc, doc } from "firebase/firestore";
+import {
+  onSnapshot,
+  addDoc,
+  deleteDoc,
+  doc,
+  query,
+  where,
+} from "firebase/firestore";
 import { db, colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
 const oldBook = ref({ id: "" });
+
+// Queries
+const q = query(colRef, where("author", "==", "Casmir Onyeka"));
+
+// Real Time Collection Data (Queries)
+onMounted(() => {
+  try {
+    onSnapshot(q, (snapshot) => {
+      let books = [];
+      snapshot.docs.forEach((doc) => {
+        books.push({ ...doc.data(), id: doc.id });
+      });
+      console.log(books);
+    });
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // Real Time Collection Data
 onMounted(() => {
