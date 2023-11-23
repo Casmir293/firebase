@@ -33,6 +33,7 @@ import {
   query,
   where,
   orderBy,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db, colRef } from "@/services/firebase";
 
@@ -97,6 +98,7 @@ const addBook = async (e) => {
     await addDoc(colRef, {
       title: newBook.value.title,
       author: newBook.value.author,
+      createdAt: serverTimestamp(),
     });
 
     newBook.value.title = "";
