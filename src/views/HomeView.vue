@@ -31,6 +31,16 @@
         <input type="password" name="password" v-model="password" />
         <button>sign up</button>
       </form>
+
+      <form class="login" @submit.prevent="login">
+        <label for="email">email:</label>
+        <input type="email" name="email" v-model="loginEmail" />
+        <label for="password">password:</label>
+        <input type="password" name="password" v-model="loginPassword" />
+        <button>login</button>
+      </form>
+
+      <button @click="logout">logout</button>
     </section>
   </div>
 </template>
@@ -47,12 +57,19 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signOut,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { db, colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
 const email = ref("");
 const password = ref("");
+const loginEmail = ref("");
+const loginPassword = ref("");
 const oldBook = ref({ id: "" });
 const auth = getAuth();
 
@@ -136,6 +153,7 @@ const deleteBook = async (e) => {
   }
 };
 
+// user sign up
 const submitForm = async (e) => {
   e.preventDefault();
 
@@ -149,6 +167,31 @@ const submitForm = async (e) => {
     (email.value = ""), (password.value = "");
   } catch (error) {
     console.error("Error creating user:", error.message);
+  }
+};
+
+// log user in
+const login = async (e) => {
+  e.preventDefault();
+  try {
+    const cred = await signInWithEmailAndPassword(
+      auth,
+      loginEmail.value,
+      loginPassword.value
+    );
+    console.log("user logged in:", cred.user);
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+
+// log user out
+const logout = async () => {
+  try {
+    await signOut(auth);
+    console.log("the user signed out");
+  } catch (error) {
+    console.error(error.message);
   }
 };
 </script>
