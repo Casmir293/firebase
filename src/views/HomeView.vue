@@ -20,6 +20,18 @@
         <button>delete a book</button>
       </form>
     </section>
+
+    <section class="auth">
+      <h1>Firebase Auth</h1>
+
+      <form class="sign-up" @submit.prevent="submitForm">
+        <label for="email">email:</label>
+        <input type="email" name="email" v-model="email" />
+        <label for="password">password:</label>
+        <input type="password" name="password" v-model="password" />
+        <button>sign up</button>
+      </form>
+    </section>
   </div>
 </template>
 
@@ -35,10 +47,14 @@ import {
   orderBy,
   serverTimestamp,
 } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { db, colRef } from "@/services/firebase";
 
 const newBook = ref({ title: "", author: "" });
+const email = ref("");
+const password = ref("");
 const oldBook = ref({ id: "" });
+const auth = getAuth();
 
 // Queries
 const q = query(
@@ -117,6 +133,22 @@ const deleteBook = async (e) => {
     oldBook.value.id = "";
   } catch (error) {
     console.error(error.message);
+  }
+};
+
+const submitForm = async (e) => {
+  e.preventDefault();
+
+  try {
+    const cred = await createUserWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+    console.log("User created:", cred.user);
+    (email.value = ""), (password.value = "");
+  } catch (error) {
+    console.error("Error creating user:", error.message);
   }
 };
 </script>
